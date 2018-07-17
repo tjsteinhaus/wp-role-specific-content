@@ -48,7 +48,7 @@ class Setup {
                 } else {
                     add_filter( 'the_content', function() use ( $message ) {
                         return wp_specialchars_decode( $message );
-                    }, 999 );;
+                    }, 999 );
                 }
             }
         }
