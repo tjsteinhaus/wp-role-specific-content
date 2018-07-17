@@ -1,0 +1,44 @@
+<?php
+$is_checked = (bool) get_post_meta( $post->ID, 'wp_disable_page__is_disabled', true );
+$url = get_post_meta( $post->ID, 'wp_disable_page__url', true );
+?>
+<p>
+    <label for="wp_disable_page_checkbox" class="post-attributes-label">
+        <input 
+            type="checkbox" 
+            name="wp_disable_page__is_disabled" 
+            id="wp_disable_page_checkbox" 
+            value="1" 
+            onChange="WPDisablePage_OnChage( this );"
+            <?php checked( 1, $is_checked, true ); ?> /> 
+        <strong>Disable Page</strong>
+    </label><br />
+    <span class="description">By disabling the page you can choose if you want to redirect it or let it 404.</span>
+</p>
+<p id="wp_disable_page__is_disabled_check" <?php echo ( empty( $is_checked ) || !$is_checked ) ? 'style="display: none;"' : ''; ?>>
+    <label for="wp_disable_page_url">
+        <strong>Redirect To:</strong>
+    </label><br />
+    <input 
+        type="text" 
+        name="wp_disable_page__url" 
+        style="width: 100%;" 
+        value="<?php echo $url; ?>" />
+    <span class="description">If left blank, the page will 404.<br /> e.g.: To redirect to the homepage, enter in /</span>
+</p>
+<!-- WP Nonce (Very Important - DO NOT REMOVE) -->
+<?php wp_nonce_field( self::NONCE_ACTION, self::NONCE_NAME ); ?>
+<!-- WP Nonce (end) -->
+
+<script type="text/javascript">
+/** 
+ * Quick and easy show/hide
+ */
+function WPDisablePage_OnChage( e ) {
+    if( e.checked == true ) {
+        document.getElementById( 'wp_disable_page__is_disabled_check' ).style.display = 'block';
+    } else {
+        document.getElementById( 'wp_disable_page__is_disabled_check' ).style.display = 'none';
+    }
+}
+</script>
