@@ -3,7 +3,7 @@
  * 
  * Plugin Name: WP Role Specific Content
  * Plugin URI: https://github.com/tjsteinhaus/wp-role-specific-content
- * Description: Instead of deleting the page, you can disable it and redirect it elsewhere.
+ * Description: Choose which roles can access the page on the frontend. Display a message or redirect if a user doesn't have permission.
  * Author: Tyler Steinhaus
  * Version: 1.0
  * Author URI: https://tylersteinhaus.com

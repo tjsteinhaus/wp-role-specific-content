@@ -12,7 +12,7 @@ class CreateMetaBox {
     /**
      * Where should the box be displayed?
      */
-    const POSITION = 'advanced';
+    const POSITION = 'side';
 
     /**
      * What order should the box be displayed in
@@ -66,7 +66,7 @@ class CreateMetaBox {
      * @author Tyler Steinhaus
      */
     public function createView( \WP_Post $post ) {
-        require( WPDisablePage_DIR . '/src/templates/admin/meta_box.phtml' );
+        require( WPRoleSpecificContent_DIR . '/src/templates/admin/meta_box.phtml' );
     }
 
     /**
@@ -86,6 +86,24 @@ class CreateMetaBox {
         }
 
         // Set the data we want to be saved
-        
+        $selected_roles = $_POST['wp_role_specific_content__role'];
+        $message = esc_html( $_POST['wp_role_specific_content__message'] );
+        $redirect = esc_html( $_POST['wp_role_specific_content__redirect'] );
+
+        update_post_meta( $post_id, 'wp_role_specific_content__role', $selected_roles );
+        update_post_meta( $post_id, 'wp_role_specific_content__message', $message );
+        update_post_meta( $post_id, 'wp_role_specific_content__redirect', $redirect );
+    }
+
+    /**
+     * Get a list of all the user roles
+     * 
+     * @since 07/17/2018
+     * @author Tyler Steinhaus
+     */
+    public function getUserRoles() {
+        global $wp_roles;
+
+        return $wp_roles->get_names();
     }
 } 

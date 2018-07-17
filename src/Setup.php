@@ -32,6 +32,26 @@ class Setup {
      * @author Tyler Steinhaus
      */
     public function setupFrontend() {
+        global $post;
+
+        // Get the current user role
+        $current_user_role = wp_get_current_user()->roles[0];
+
+        $selected_roles = get_post_meta( $post->ID, 'wp_role_specific_content__role', true );
+        $message = get_post_meta( $post->ID, 'wp_role_specific_content__message', true );
+        $redirect = get_post_meta( $post->ID, 'wp_role_specific_content__redirect', true );
+
+        if( count( $selected_roles ) > 0 ) {
+            if( !in_array( $current_user_role, $selected_roles ) ) {
+                if( !empty( $redirect ) ) { 
+                    header( 'Location: ' . $redirect );
+                } else {
+                    add_filter( 'the_content', function() use ( $message ) {
+                        return wp_specialchars_decode( $message );
+                    }, 999 );;
+                }
+            }
+        }
         
     }
 
