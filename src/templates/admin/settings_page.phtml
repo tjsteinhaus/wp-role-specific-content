@@ -1,0 +1,23 @@
+<div class="wrap">
+    <h1><?php echo \WPRoleSpecificContent\Setup::PLUGIN_NAME; ?></h1>
+
+    <form method="post" action="options.php">
+        <?php settings_fields( \WPRoleSpecificContent\Setup::PLUGIN_ID ); ?>
+        <?php do_settings_sections( \WPRoleSpecificContent\Setup::PLUGIN_ID ); ?>
+
+        <table class="form-table">
+            <tr valign="top">
+                <th scope="row">Default Message to display to restricted roles</th>
+                <td>
+                    <textarea class="large-text" rows="4" name="<?php echo \WPRoleSpecificContent\Setup::PLUGIN_ID . '__default_message'; ?>"><?php echo esc_html( get_option( \WPRoleSpecificContent\Setup::PLUGIN_ID . '__default_message' ) ); ?></textarea>
+                    <p class="description">
+                        <strong>Enter in {{ PAGE_TITLE }} whereever you would like the page title to be displayed.</strong><br />
+                        This will be displayed if you leave the message empty on the post.
+                    </p>
+                </td>
+            </tr>
+        </table>
+        
+        <?php submit_button(); ?>
+    </form>
+</div>
