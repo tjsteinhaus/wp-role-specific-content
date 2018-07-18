@@ -9,7 +9,12 @@
             <tr valign="top">
                 <th scope="row">Default Message to display to restricted roles</th>
                 <td>
-                    <textarea class="large-text" rows="4" name="<?php echo \WPRoleSpecificContent\Setup::PLUGIN_ID . '__default_message'; ?>"><?php echo esc_html( get_option( \WPRoleSpecificContent\Setup::PLUGIN_ID . '__default_message' ) ); ?></textarea>
+                    <textarea 
+                        class="large-text" 
+                        rows="4" 
+                        name="<?php echo \WPRoleSpecificContent\Setup::PLUGIN_ID . '__default_message'; ?>">
+                        <?php echo esc_html( get_option( \WPRoleSpecificContent\Setup::PLUGIN_ID . '__default_message' ) ); ?>
+                    </textarea>
                     <p class="description">
                         <strong>Enter in {{ PAGE_TITLE }} whereever you would like the page title to be displayed.</strong><br />
                         This will be displayed if you leave the message empty on the post.

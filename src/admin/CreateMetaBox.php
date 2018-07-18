@@ -51,7 +51,7 @@ class CreateMetaBox {
             \WPRoleSpecificContent\Setup::PLUGIN_ID, // Metabox ID
             \WPRoleSpecificContent\Setup::PLUGIN_NAME, // Metabox Name
             array( __CLASS__, 'createView' ), // Metabox Callback
-            self::POST_TYPES, // Metabox Post Types
+            apply_filters( strtolower( \WPRoleSpecificContent\Setup::PLUGIN_ID ) . '__post_types',  self::POST_TYPES ), // Metabox Post Types
             self::POSITION, // Metabox Position
             self::PRIORITY // Metabox Priority
         );

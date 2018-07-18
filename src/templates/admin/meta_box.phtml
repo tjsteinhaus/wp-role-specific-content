@@ -29,13 +29,24 @@ $redirect = get_post_meta( $post->ID, 'wp_role_specific_content__redirect', true
     <label for="wp_role_specific_content__message">
         <strong>Message to display to restricted roles:</strong>
     </label><br />
-    <textarea class="large-text" name="wp_role_specific_content__message" id="wp_role_specific_content__message" rows="4"><?php echo $message; ?></textarea>
+    <textarea 
+        class="large-text" 
+        name="wp_role_specific_content__message" 
+        id="wp_role_specific_content__message" 
+        rows="4">
+        <?php echo $message; ?>
+    </textarea>
 </p>
 <p>
     <label for="wp_role_specific_content__redirect">
         <strong>Redirect restricted roles to:</strong>
     </label><br />
-    <input type="text" class="large-text" name="wp_role_specific_content__redirect" id="wp_role_specific_content__redirect" value="<?php echo $redirect; ?>" />
+    <input 
+        type="text" 
+        class="large-text" 
+        name="wp_role_specific_content__redirect" 
+        id="wp_role_specific_content__redirect" 
+        value="<?php echo $redirect; ?>" />
 </p>
 <!-- WP Nonce (Very Important - DO NOT REMOVE) -->
 <?php wp_nonce_field( self::NONCE_ACTION, self::NONCE_NAME ); ?>

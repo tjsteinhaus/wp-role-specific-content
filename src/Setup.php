@@ -42,6 +42,7 @@ class Setup {
         $message = get_post_meta( $post->ID, 'wp_role_specific_content__message', true );
         $redirect = get_post_meta( $post->ID, 'wp_role_specific_content__redirect', true );
 
+        // If message is empty, use the default message.
         if( empty( $message ) ) {
             $message = get_option( \WPRoleSpecificContent\Setup::PLUGIN_ID . '__default_message' );
         }
