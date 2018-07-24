@@ -36,6 +36,10 @@ class Setup {
     public function setupFrontend() {
         global $post;
 
+        if( !in_array( $post->post_type, \WPRoleSpecificContent\Admin\CreateMetaBox::POST_TYPES ) ) {
+            return false;
+        }
+
         // Get the current user role
         $current_user_role = wp_get_current_user()->roles[0];
 
