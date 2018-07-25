@@ -53,7 +53,7 @@ class Setup {
         }
 
         if( count( $selected_roles ) > 0 ) {
-            if( !in_array( $current_user_role, $selected_roles ) ) {
+            if( !in_array( $current_user_role, (array) $selected_roles ) ) {
                 if( !empty( $redirect ) && !did_action( 'the_post' ) ) { 
                     header( 'Location: ' . $redirect );
                 } else {

@@ -1,5 +1,5 @@
 <?php
-$selected_roles = get_post_meta( $post->ID, 'wp_role_specific_content__role', true ) || array();
+$selected_roles = (array) get_post_meta( $post->ID, 'wp_role_specific_content__role', true );
 $message = get_post_meta( $post->ID, 'wp_role_specific_content__message', true );
 $redirect = get_post_meta( $post->ID, 'wp_role_specific_content__redirect', true );
 ?>
