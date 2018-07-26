@@ -24,7 +24,7 @@ class Setup {
         \WPRoleSpecificContent\Admin\CreateMetaBox::init();
         \WPRoleSpecificContent\Admin\CreateSettingsPage::init();
         add_action( 'wp', array( __CLASS__, 'setupFrontend' ), 999 );
-        add_action( 'the_post', array( __CLASS__, 'setupFrontend' ) );
+        add_filter( 'the_content', array( __CLASS__, 'the_content' ) );
     }
 
     /**
@@ -44,42 +44,50 @@ class Setup {
         $current_user_role = wp_get_current_user()->roles[0];
 
         $selected_roles = get_post_meta( $post->ID, 'wp_role_specific_content__role', true );
-        $message = get_post_meta( $post->ID, 'wp_role_specific_content__message', true );
         $redirect = get_post_meta( $post->ID, 'wp_role_specific_content__redirect', true );
 
-        // If message is empty, use the default message.
-        if( empty( $message ) ) {
-            $message = get_option( \WPRoleSpecificContent\Setup::PLUGIN_ID . '__default_message' );
-        }
-
-        if( count( $selected_roles ) > 0 ) {
+        if( !empty( $selected_roles ) ) {
             if( !in_array( $current_user_role, (array) $selected_roles ) ) {
-                if( !empty( $redirect ) && !did_action( 'the_post' ) ) { 
+                if( !empty( $redirect ) ) { 
                     header( 'Location: ' . $redirect );
-                } else {
-                    add_filter( 'the_content', array( __CLASS__, 'the_content' ), 9999 );
                 }
             }
         }
     }
 
     /**
-     * the_content - this replaces the content with the restricted message
+     * the_content - separate function that does the restricting content
      * 
-     * @since 07/18/2018
+     * @since 07/26/2018
      * @author Tyler Steinhaus
      */
-    public function the_content() {
-        $message = get_post_meta( get_the_ID(), 'wp_role_specific_content__message', true );
-        
-        // If message is empty, use the default message.
-        if( empty( $message ) ) {
-            $message = get_option( \WPRoleSpecificContent\Setup::PLUGIN_ID . '__default_message' );
+    public function the_content( $content ) {
+        global $post;
+
+        if( !in_array( $post->post_type, \WPRoleSpecificContent\Admin\CreateMetaBox::POST_TYPES ) ) {
+            return false;
         }
 
-        $message = str_replace( '{{ PAGE_TITLE }}', get_the_title(), $message );
-             
-        return wp_specialchars_decode( $message );
-    }
+        // Get the current user role
+        $current_user_role = wp_get_current_user()->roles[0];
 
+        $selected_roles = get_post_meta( $post->ID, 'wp_role_specific_content__role', true );
+        //return print_r( $selected_roles, true );
+        if( !empty( $selected_roles ) ) {
+            if( !in_array( $current_user_role, (array) $selected_roles ) ) {
+                $message = get_post_meta( $post->ID, 'wp_role_specific_content__message', true );
+        
+                // If message is empty, use the default message.
+                if( empty( trim( $message ) ) ) {
+                    $message = get_option( \WPRoleSpecificContent\Setup::PLUGIN_ID . '__default_message' );
+                }
+
+                $message = str_replace( '{{ PAGE_TITLE }}', get_the_title(), $message );
+                    
+                return wp_specialchars_decode( $message );
+            }
+        }
+
+        return $content;
+    }
 }
