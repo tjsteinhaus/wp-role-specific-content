@@ -17,7 +17,7 @@ class CreateMetaBox {
     /**
      * What order should the box be displayed in
      */
-    const PRIORITY = 'core';
+    const PRIORITY = 'low';
 
     /**
      * WP Nonce Action
