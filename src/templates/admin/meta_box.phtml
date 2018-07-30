@@ -2,6 +2,7 @@
 $selected_roles = (array) get_post_meta( $post->ID, 'wp_role_specific_content__role', true );
 $message = get_post_meta( $post->ID, 'wp_role_specific_content__message', true );
 $redirect = get_post_meta( $post->ID, 'wp_role_specific_content__redirect', true );
+$hide = get_post_meta( $post->ID, 'wp_role_specific_content__hide', true );
 ?>
 <p>
     <label class="post-attributes-label">
@@ -24,6 +25,19 @@ $redirect = get_post_meta( $post->ID, 'wp_role_specific_content__redirect', true
     }
     ?>
     <span class="description">By not choosing a role, the post will be public.</span>
+</p>
+<hr>
+<p>
+    <label for="wp_role_specific_content__hide">
+    <input 
+            type="checkbox" 
+            name="wp_role_specific_content__hide" 
+            id="wp_role_specific_content__hide" 
+            value="1"
+            <?php checked( 1, $hide, true ); ?>  /> 
+        <strong>Hide from the public queries if not allowed to view</strong>
+    </label><br />
+    <span class="description">Example: Blog, Archive, Category pages and Menus.</span>
 </p>
 <p>
     <label for="wp_role_specific_content__message">

@@ -89,10 +89,12 @@ class CreateMetaBox {
         $selected_roles = $_POST['wp_role_specific_content__role'];
         $message = esc_html( $_POST['wp_role_specific_content__message'] );
         $redirect = esc_html( $_POST['wp_role_specific_content__redirect'] );
+        $hide = esc_html( $_POST['wp_role_specific_content__hide'] );
 
         update_post_meta( $post_id, 'wp_role_specific_content__role', $selected_roles );
         update_post_meta( $post_id, 'wp_role_specific_content__message', $message );
         update_post_meta( $post_id, 'wp_role_specific_content__redirect', $redirect );
+        update_post_meta( $post_id, 'wp_role_specific_content__hide', $hide );
     }
 
     /**

@@ -40,12 +40,14 @@ class Setup {
             return false;
         }
 
+        add_action( 'pre_get_posts', array( __CLASS__, 'modifyWPQuery' ) );
+
         // Get the current user role
         $current_user_role = wp_get_current_user()->roles[0];
 
         $selected_roles = get_post_meta( $post->ID, 'wp_role_specific_content__role', true );
         $redirect = get_post_meta( $post->ID, 'wp_role_specific_content__redirect', true );
-
+        
         if( !empty( $selected_roles ) ) {
             if( !in_array( $current_user_role, (array) $selected_roles ) ) {
                 if( !empty( $redirect ) ) { 
@@ -89,5 +91,34 @@ class Setup {
         }
 
         return $content;
+    }
+
+    /**
+     * Modify the WP Query so we never see pages that 
+     * are hidden from public queries
+     * 
+     * @since 07/30/2018
+     * @author Tyler Steinhaus
+     */
+    public function modifyWPQuery( $query ) {   
+        if( !is_admin() ) {
+            global $wpdb;
+            // Get the current user role
+            $current_user_role = wp_get_current_user()->roles[0];
+
+            $exclude_posts = $wpdb->get_col( "SELECT post_id from $wpdb->postmeta WHERE meta_key = 'wp_role_specific_content__hide' && meta_value = '1'" );
+            $exclude_ids = array();
+            if( count( $exclude_posts ) > 0 ) {
+                foreach( $exclude_posts as $post ) {
+                    $selected_roles = get_post_meta( $post, 'wp_role_specific_content__role', true );
+                    
+                    if( !in_array( $current_user_role, (array) $selected_roles ) ) {
+                        $exclude_ids[] = $post;
+                    }
+                }
+            }
+
+            $query->set( 'post__not_in', $exclude_ids );
+        }
     }
 }
