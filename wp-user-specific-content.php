@@ -5,7 +5,7 @@
  * Plugin URI: https://github.com/tjsteinhaus/wp-role-specific-content
  * Description: Choose which roles can access the page on the frontend. Display a message or redirect if a user doesn't have permission.
  * Author: Tyler Steinhaus
- * Version: 1.0
+ * Version: 2.0
  * Author URI: https://tylersteinhaus.com
 */
 
