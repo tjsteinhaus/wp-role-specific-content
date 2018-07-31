@@ -1,0 +1,26 @@
+{
+    "name": "tjsteinhaus/wp-role-specific-content",
+    "description": "hoose which roles can access the page on the frontend. Display a message or redirect if a user doesn't have permission.",
+    "config": {
+        "vendor-dir": "vendor",
+        "preferred-install": "source"
+    },
+    "authors": [
+        {
+            "name": "Tyler Steinhaus",
+            "email": "tjsteinhaus@gmail.com"
+        }
+    ],
+    "require": {
+        "php": ">=7.0.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "WPRoleSpecificContent\\": "src/"
+        },
+        "files": [
+
+        ]
+    },
+    "minimum-stability": "stable"
+}
