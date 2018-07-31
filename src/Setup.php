@@ -42,17 +42,33 @@ class Setup {
 
         add_action( 'pre_get_posts', array( __CLASS__, 'modifyWPQuery' ) );
 
+        add_filter( 'wp_nav_menu_objects', function( $menu_items, $args ) {
+            $_menu_items = array();
+
+            if( count( $menu_items ) > 0 ) {
+                foreach( $menu_items as $key => $item ) {
+                    $post_id = $item->object_id;
+
+                    if( $post_id != $item->ID ) {
+                        if( !self::shouldShowInMenu( $post_id ) ) {
+                            unset( $menu_items[$key] );
+                        }
+                    }
+                }
+            }
+
+            return $menu_items;
+        }, 10, 2 );
+
         // Get the current user role
         $current_user_role = wp_get_current_user()->roles[0];
 
         $selected_roles = get_post_meta( $post->ID, 'wp_role_specific_content__role', true );
         $redirect = get_post_meta( $post->ID, 'wp_role_specific_content__redirect', true );
         
-        if( !empty( $selected_roles ) ) {
-            if( !in_array( $current_user_role, (array) $selected_roles ) ) {
-                if( !empty( $redirect ) ) { 
-                    header( 'Location: ' . $redirect );
-                }
+        if( !self::hasAccessToPost( $post->ID ) ) {
+            if( !empty( $redirect ) ) { 
+                header( 'Location: ' . $redirect );
             }
         }
     }
@@ -70,24 +86,17 @@ class Setup {
             return false;
         }
 
-        // Get the current user role
-        $current_user_role = wp_get_current_user()->roles[0];
-
-        $selected_roles = get_post_meta( $post->ID, 'wp_role_specific_content__role', true );
-        //return print_r( $selected_roles, true );
-        if( !empty( $selected_roles ) ) {
-            if( !in_array( $current_user_role, (array) $selected_roles ) ) {
-                $message = get_post_meta( $post->ID, 'wp_role_specific_content__message', true );
-        
-                // If message is empty, use the default message.
-                if( empty( trim( $message ) ) ) {
-                    $message = get_option( \WPRoleSpecificContent\Setup::PLUGIN_ID . '__default_message' );
-                }
-
-                $message = str_replace( '{{ PAGE_TITLE }}', get_the_title(), $message );
-                    
-                return wp_specialchars_decode( $message );
+        if( !self::hasAccessToPost( $post->ID ) ) {
+            $message = get_post_meta( $post->ID, 'wp_role_specific_content__message', true );
+    
+            // If message is empty, use the default message.
+            if( empty( trim( $message ) ) ) {
+                $message = get_option( \WPRoleSpecificContent\Setup::PLUGIN_ID . '__default_message' );
             }
+
+            $message = str_replace( '{{ PAGE_TITLE }}', get_the_title(), $message );
+                
+            return wp_specialchars_decode( $message );
         }
 
         return $content;
@@ -110,9 +119,7 @@ class Setup {
             $exclude_ids = array();
             if( count( $exclude_posts ) > 0 ) {
                 foreach( $exclude_posts as $post ) {
-                    $selected_roles = get_post_meta( $post, 'wp_role_specific_content__role', true );
-                    
-                    if( !in_array( $current_user_role, (array) $selected_roles ) ) {
+                    if( !self::hasAccessToPost( $post ) ) {
                         $exclude_ids[] = $post;
                     }
                 }
@@ -120,5 +127,94 @@ class Setup {
 
             $query->set( 'post__not_in', $exclude_ids );
         }
+    }
+
+    /**
+     * Check if user role is able to see said post
+     * 
+     * @since 07/30/2018
+     * @author Tyler Steinhaus
+     * 
+     * @param $post_id (int) Post Id of the post you want to check
+     * @param $hide (bool) Whether you want to check to see if the post is hidden from user roles that don't have access
+     * 
+     * @return (bool) Whether the user role has access to the post
+     */
+    public function hasAccessToPost( int $post_id = null ) {
+        global $wpdb;
+
+        // if no post_id is given grab the global id
+        if( is_null( $post_id ) ) {
+            global $post;
+
+            $post_id = $post->ID;
+        }
+
+        // Get the current user role
+        $current_user_role = wp_get_current_user()->roles[0];
+
+        // Selected Roles
+        $selected_roles = (array) get_post_meta( $post_id, 'wp_role_specific_content__role', true );
+
+        // If there are no selected roles, show to everyone
+        if( count( $selected_roles ) <= 0 ) {
+            return true;
+        }
+
+        // Show if current role is in the selected roles
+        if( in_array( $current_user_role, (array) $selected_roles ) ) {
+            return true;
+        }
+
+        // Otherwise return false
+        return false;
+    }
+
+    /**
+     * Should the post be hidden from the user roles that don't have access
+     * 
+     * @since 07/31/2018
+     * @author Tyler Steinhaus
+     * 
+     * @param $post_id (int)
+     * 
+     * @return (bool) Whether it should be displayed
+     */
+    public function shouldShowPost( int $post_id ) {
+        if( self::hasAccessToPost( $post_id ) ) {
+            $hide = get_post_meta( $post_id, 'wp_role_specific_content__hide', true ) == "1" ? true : false;
+
+            if( $hide ) {
+                return false;
+            }
+
+            return true;
+        }
+
+        return true;
+    }
+
+    /**
+     * Should the post be displayed in the menu
+     * 
+     * @since 07/31/2018
+     * @author Tyler Steinhaus
+     * 
+     * @param $post_id (int)
+     * 
+     * @return (bool) Whether it should be displayed
+     */
+    public function shouldShowInMenu( int $post_id ) {
+        if( !self::hasAccessToPost( $post_id ) ) {
+            $hideInMenu = get_post_meta( $post_id, 'wp_role_specific_content__hide_menus', true ) == "1" ? true : false;
+
+            if( $hideInMenu ) {
+                return false;
+            }
+
+            return true;
+        }
+
+        return true;
     }
 }

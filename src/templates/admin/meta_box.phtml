@@ -3,6 +3,7 @@ $selected_roles = (array) get_post_meta( $post->ID, 'wp_role_specific_content__r
 $message = get_post_meta( $post->ID, 'wp_role_specific_content__message', true );
 $redirect = get_post_meta( $post->ID, 'wp_role_specific_content__redirect', true );
 $hide = get_post_meta( $post->ID, 'wp_role_specific_content__hide', true );
+$hide_menu = get_post_meta( $post->ID, 'wp_role_specific_content__hide_menus', true );
 ?>
 <p>
     <label class="post-attributes-label">
@@ -37,7 +38,19 @@ $hide = get_post_meta( $post->ID, 'wp_role_specific_content__hide', true );
             <?php checked( 1, $hide, true ); ?>  /> 
         <strong>Hide from the public queries if not allowed to view</strong>
     </label><br />
-    <span class="description">Example: Blog, Archive, Category pages and Menus.</span>
+    <span class="description">Example: Blog, Archive, Category pages.</span>
+</p>
+<p>
+    <label for="wp_role_specific_content__hide_menus">
+    <input 
+            type="checkbox" 
+            name="wp_role_specific_content__hide_menus" 
+            id="wp_role_specific_content__hide_menus" 
+            value="1"
+            <?php checked( 1, $hide_menu, true ); ?>  /> 
+        <strong>Hide from the menus</strong>
+    </label><br />
+    <span class="description">Do not display in the menus if the user role doesn't have access.</span>
 </p>
 <p>
     <label for="wp_role_specific_content__message">
