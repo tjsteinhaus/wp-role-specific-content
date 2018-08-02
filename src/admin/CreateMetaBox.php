@@ -35,7 +35,7 @@ class CreateMetaBox {
      * @since 07/17/2018
      * @author Tyler Steinhaus
      */
-    public function init() {
+    public static function init() {
         add_action( 'add_meta_boxes', array( __CLASS__, 'createMetaBox' ) );
         add_actioN( 'save_post', array( __CLASS__, 'saveMetaData' ) );
     }
@@ -46,7 +46,7 @@ class CreateMetaBox {
      * @since 07/17/2018
      * @author Tyler Steinhaus
      */
-    public function createMetaBox() {
+    public static function createMetaBox() {
         add_meta_box( 
             \WPRoleSpecificContent\Setup::PLUGIN_ID, // Metabox ID
             \WPRoleSpecificContent\Setup::PLUGIN_NAME, // Metabox Name
@@ -65,7 +65,7 @@ class CreateMetaBox {
      * @since 07/17/2018
      * @author Tyler Steinhaus
      */
-    public function createView( \WP_Post $post ) {
+    public static function createView( \WP_Post $post ) {
         require( WPRoleSpecificContent_DIR . '/src/templates/admin/meta_box.phtml' );
     }
 
@@ -77,7 +77,7 @@ class CreateMetaBox {
      * @since 07/17/2018
      * @author Tyler Steinhaus
      */
-    public function saveMetaData( $post_id ) {
+    public static function saveMetaData( $post_id ) {
         // Check to see if multiple items should flag so the data isn't saved
         if( 
             !wp_verify_nonce( $_POST[self::NONCE_NAME], self::NONCE_ACTION )
@@ -105,7 +105,7 @@ class CreateMetaBox {
      * @since 07/17/2018
      * @author Tyler Steinhaus
      */
-    public function getUserRoles() {
+    public static function getUserRoles() {
         global $wp_roles;
 
         return $wp_roles->get_names();

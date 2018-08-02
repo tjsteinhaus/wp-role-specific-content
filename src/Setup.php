@@ -23,8 +23,11 @@ class Setup {
     public function init() {
         \WPRoleSpecificContent\Admin\CreateMetaBox::init();
         \WPRoleSpecificContent\Admin\CreateSettingsPage::init();
-        add_action( 'wp', array( __CLASS__, 'setupFrontend' ), 999 );
-        add_filter( 'the_content', array( __CLASS__, 'the_content' ) );
+
+        if( !is_admin() ) {
+            add_action( 'wp', array( __CLASS__, 'setupFrontend' ), 999 );
+            add_filter( 'the_content', array( __CLASS__, 'the_content' ) );
+        }
     }
 
     /**
@@ -33,7 +36,7 @@ class Setup {
      * @since 07/17/2018
      * @author Tyler Steinhaus
      */
-    public function setupFrontend() {
+    public static function setupFrontend() {
         global $post;
 
         if( !in_array( $post->post_type, \WPRoleSpecificContent\Admin\CreateMetaBox::POST_TYPES ) ) {
@@ -42,23 +45,7 @@ class Setup {
 
         add_action( 'pre_get_posts', array( __CLASS__, 'modifyWPQuery' ) );
 
-        add_filter( 'wp_nav_menu_objects', function( $menu_items, $args ) {
-            $_menu_items = array();
-
-            if( count( $menu_items ) > 0 ) {
-                foreach( $menu_items as $key => $item ) {
-                    $post_id = $item->object_id;
-
-                    if( $post_id != $item->ID ) {
-                        if( !self::shouldShowInMenu( $post_id ) ) {
-                            unset( $menu_items[$key] );
-                        }
-                    }
-                }
-            }
-
-            return $menu_items;
-        }, 10, 2 );
+        add_filter( 'wp_nav_menu_objects', array( __CLASS__, 'removeMenuItems' ), 10, 2 );
 
         // Get the current user role
         $current_user_role = wp_get_current_user()->roles[0];
@@ -74,12 +61,41 @@ class Setup {
     }
 
     /**
+     * Removes menu items if user doesn't have access.
+     * 
+     * @since 08/02/2018
+     * @author Tyler Steinhaus
+     * 
+     * @param $menu_items (object)
+     * @param $args (object)
+     * 
+     * @return object
+     */
+    public static function removeMenuItems( $menu_items, $args ) {
+        $_menu_items = array();
+
+        if( count( $menu_items ) > 0 ) {
+            foreach( $menu_items as $key => $item ) {
+                $post_id = $item->object_id;
+
+                if( $post_id != $item->ID ) {
+                    if( !self::shouldShowInMenu( $post_id ) ) {
+                        unset( $menu_items[$key] );
+                    }
+                }
+            }
+        }
+
+        return $menu_items;
+    }
+
+    /**
      * the_content - separate function that does the restricting content
      * 
      * @since 07/26/2018
      * @author Tyler Steinhaus
      */
-    public function the_content( $content ) {
+    public static function the_content( $content ) {
         global $post;
 
         if( !in_array( $post->post_type, \WPRoleSpecificContent\Admin\CreateMetaBox::POST_TYPES ) ) {
@@ -109,7 +125,7 @@ class Setup {
      * @since 07/30/2018
      * @author Tyler Steinhaus
      */
-    public function modifyWPQuery( $query ) {   
+    public static function modifyWPQuery( $query ) {   
         if( !is_admin() ) {
             global $wpdb;
             // Get the current user role
@@ -140,7 +156,7 @@ class Setup {
      * 
      * @return (bool) Whether the user role has access to the post
      */
-    public function hasAccessToPost( int $post_id = null ) {
+    public static function hasAccessToPost( int $post_id = null ) {
         global $wpdb;
 
         // if no post_id is given grab the global id
@@ -180,7 +196,7 @@ class Setup {
      * 
      * @return (bool) Whether it should be displayed
      */
-    public function shouldShowPost( int $post_id ) {
+    public static function shouldShowPost( int $post_id ) {
         if( self::hasAccessToPost( $post_id ) ) {
             $hide = get_post_meta( $post_id, 'wp_role_specific_content__hide', true ) == "1" ? true : false;
 
@@ -204,7 +220,7 @@ class Setup {
      * 
      * @return (bool) Whether it should be displayed
      */
-    public function shouldShowInMenu( int $post_id ) {
+    public static function shouldShowInMenu( int $post_id ) {
         if( !self::hasAccessToPost( $post_id ) ) {
             $hideInMenu = get_post_meta( $post_id, 'wp_role_specific_content__hide_menus', true ) == "1" ? true : false;
 

@@ -21,7 +21,7 @@ class CreateSettingsPage {
      * @since 07/17/2018
      * @author Tyler Steinhaus
      */
-    public function init() {
+    public static function init() {
         add_action( 'admin_menu', array( __CLASS__, 'createOptionsMenu' ) );
         add_action( 'admin_init', array( __CLASS__, 'registerSettings' ) );
     }
@@ -32,7 +32,7 @@ class CreateSettingsPage {
      * @since 07/18/2018
      * @author Tyler Steinhaus
      */
-    public function registerSettings() {
+    public static function registerSettings() {
         register_setting( \WPRoleSpecificContent\Setup::PLUGIN_ID, \WPRoleSpecificContent\Setup::PLUGIN_ID . '__default_message', array( 'type' => 'string' ) );
     }
 
@@ -43,7 +43,7 @@ class CreateSettingsPage {
      * @since 07/18/2018
      * @author Tyler Steinhaus
      */
-    public function createOptionsMenu() {
+    public static function createOptionsMenu() {
         add_options_page(
             \WPRoleSpecificContent\Setup::PLUGIN_NAME,
             \WPRoleSpecificContent\Setup::PLUGIN_NAME,
@@ -59,7 +59,7 @@ class CreateSettingsPage {
      * @since 07/18/2018
      * @author Tyler Steinhaus
      */
-    public function createPageView() {
+    public static function createPageView() {
         require( WPRoleSpecificContent_DIR . 'src/templates/admin/settings_page.phtml' );
     }
 }
