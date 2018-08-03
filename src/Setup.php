@@ -47,9 +47,6 @@ class Setup {
 
         add_filter( 'wp_nav_menu_objects', array( __CLASS__, 'removeMenuItems' ), 10, 2 );
 
-        // Get the current user role
-        $current_user_role = wp_get_current_user()->roles[0];
-
         $selected_roles = get_post_meta( $post->ID, 'wp_role_specific_content__role', true );
         $redirect = get_post_meta( $post->ID, 'wp_role_specific_content__redirect', true );
         
@@ -128,9 +125,7 @@ class Setup {
     public static function modifyWPQuery( $query ) {   
         if( !is_admin() ) {
             global $wpdb;
-            // Get the current user role
-            $current_user_role = wp_get_current_user()->roles[0];
-
+        
             $exclude_posts = $wpdb->get_col( "SELECT post_id from $wpdb->postmeta WHERE meta_key = 'wp_role_specific_content__hide' && meta_value = '1'" );
             $exclude_ids = array();
             if( count( $exclude_posts ) > 0 ) {
@@ -167,7 +162,13 @@ class Setup {
         }
 
         // Get the current user role
-        $current_user_role = wp_get_current_user()->roles[0];
+        $current_user_role = wp_get_current_user();
+
+        if( empty( $current_user_role->roles ) ) {
+            $current_user_role = 'public';
+        } else {
+            $current_user_role->roles[0];
+        }
 
         // Selected Roles
         $selected_roles = (array) get_post_meta( $post_id, 'wp_role_specific_content__role', true );
