@@ -167,7 +167,7 @@ class Setup {
         if( empty( $current_user_role->roles ) ) {
             $current_user_role = 'public';
         } else {
-            $current_user_role->roles[0];
+            $current_user_role = $current_user_role->roles[0];
         }
 
         // Selected Roles
